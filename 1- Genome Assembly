@@ -1,0 +1,52 @@
+# 1- Genome Assembly
+
+# specify the SLURM
+#!/bin/bash -e
+#SBATCH -a 1-13 # [Requuested number of parallel process]
+#SBATCH --cpus-per-task 14 
+#SBATCH --mem 150G
+#SBATCH -t 2-00:00:00
+
+eval "$(conda shell.bash hook)"
+conda activate hifiasm
+
+# Set variables for a single sample
+assembly_name = "sample_1"
+hifi_fastq_path="out/${assembly_name}/reads.fastq"
+
+# Create the output directory
+mkdir -p out/${assembly_name}
+
+
+# Calculate the total number of bases in the FASTQ file
+awk 'NR%4==2{c+=length($1)} END {print "total bases: " c}' $hifi_fastq_path \
+    > ${hifi_fastq_path}.stats
+
+
+# Run Hifiasm to assemble the genome
+hifiasm $hifi_fastq_path \
+    -o out/${assembly_name}/${assembly_name} \
+    -t 14
+
+
+# Convert GFA files to FASTA format for haplotype 1, haplotype 2, and primary contigs
+awk '/^S/ { print ">" $2 "\n" $3 }' \
+    out/${assembly_name}/${assembly_name}.bp.hap1.p_ctg.gfa \
+    > out/${assembly_name}/${assembly_name}.hap1.p_ctg.fa
+awk '/^S/ { print ">" $2 "\n" $3 }' \
+    out/${assembly_name}/${assembly_name}.bp.hap2.p_ctg.gfa \
+    > out/${assembly_name}/${assembly_name}.hap2.p_ctg.fa
+awk '/^S/ { print ">" $2 "\n" $3 }' \
+    out/${assembly_name}/${assembly_name}.bp.p_ctg.gfa \
+    > out/${assembly_name}/${assembly_name}.p_ctg.fa
+
+# Generate assembly statistics
+assembly-stats out/${assembly_name}/${assembly_name}.hap1.p_ctg.fa \
+    > out/${assembly_name}/${assembly_name}.hap1.p_ctg.stats
+assembly-stats out/${assembly_name}/${assembly_name}.hap2.p_ctg.fa \
+    > out/${assembly_name}/${assembly_name}.hap2.p_ctg.stats
+assembly-stats out/${assembly_name}/${assembly_name}.p_ctg.fa \
+    > out/${assembly_name}/${assembly_name}.p_ctg.stats
+
+
+
