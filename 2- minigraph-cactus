@@ -71,3 +71,15 @@ singularity exec -H $(pwd) docker://google/deepvariant:1.6.0 \
   --make_examples_extra_args="min_mapping_quality=1,keep_legacy_allele_counter_behavior=true,normalize_reads=true" \
   --num_shards=32
 
+#--------------------------------------------------------------------------------------------------#
+
+# SNVstory
+docker-compose build
+aws s3 sync s3://igm-public-dropbox/snvstory/resource_dir/ dev/data/resource_dir/ --no-sign-request
+
+docker-compose run ancestry \
+    --path /hprc10/hprc10.hg002.new.dv.vcf.gz \
+    --resource "/data/resource_dir" \
+    --output-dir s3://path-to-output-directory \
+    --genome-ver 38 \
+    --mode WES
