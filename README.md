@@ -9,8 +9,6 @@ This Nextflow workflow assembles a genome using HiFi reads, constructs a pangeno
 This pipeline requires the following software:
 
 - **[Nextflow](https://www.nextflow.io/)**
-- **[Singularity](https://sylabs.io/guides/3.0/user-guide/)** or Docker
-- **[Conda](https://docs.conda.io/en/latest/)** for package management
 - **[GraphAligner](https://github.com/maickrau/GraphAligner)** (included in the workflow)
 - **[DeepVariant](https://github.com/google/deepvariant)** (run through Singularity)
 
@@ -20,9 +18,19 @@ This pipeline requires the following software:
 - **Long Read Mapping** to the graph using GraphAligner
 - **Variant Calling** with DeepVariant
 
-## Installation
+Output Files
+The following outputs will be generated:
 
-1. **Install Nextflow**
-   ```bash
-   curl -s https://get.nextflow.io | bash
-   mv nextflow ~/bin/ # move to your preferred path
+Genome Assembly:
+
+out/sample_name/*.fa - FASTA files containing haplotype and primary contigs
+out/sample_name/*.stats - Statistics of each assembly
+Pangenome Graph:
+
+hprc10/*.gbz - Final pangenome graph binary format
+Mapped Reads:
+
+HG002.hifi.gam - Alignment output of long reads to the graph
+Variant Calling:
+
+hprc10/hprc10.hg002.new.dv.vcf.gz - Variants identified with DeepVariant
