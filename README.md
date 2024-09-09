@@ -18,14 +18,15 @@ This pipeline requires the following software:
 - **Long Read Mapping** to the graph using GraphAligner
 - **Variant Calling** with DeepVariant
 
-Output Files
+### Output Files
 The following outputs will be generated:
 
-Genome Assembly:
+- ** Genome Assembly:
 
 out/sample_name/*.fa - FASTA files containing haplotype and primary contigs
 out/sample_name/*.stats - Statistics of each assembly
-Pangenome Graph:
+
+- **Pangenome Graph:
 
 hprc10/*.gbz - Final pangenome graph binary format
 Mapped Reads:
